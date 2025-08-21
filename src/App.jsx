@@ -84,7 +84,7 @@ const SpeechApp = () => {
 				<div className="space-y-4 p-6">
 					<h1 className="text-center text-2xl font-bold">Ideogram</h1>
 
-					<div className="flex gap-2">
+					<form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
 						<input
 							type="text"
 							value={input}
@@ -98,7 +98,7 @@ const SpeechApp = () => {
 						>
 							Add
 						</button>
-					</div>
+					</form>
 
 					<ul className="grid grid-cols-2 gap-5">
 						{entries.map((entry, idx) => (
