@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
 const SpeechApp = () => {
 	const [entries, setEntries] = useState([
@@ -21,7 +21,7 @@ const SpeechApp = () => {
 	const [currentIndex, setCurrentIndex] = useState(null);
 	const [flashIndex, setFlashIndex] = useState(null);
 
-	const intervalRef = useRef(null);
+	const stopSpeakingRef = useRef(null);
 
 	const speedIntervals = {
 		'very slow': 5000,
@@ -30,6 +30,20 @@ const SpeechApp = () => {
 		fast: 1000,
 		'very fast': 500
 	};
+
+	// wait for voices to load properly
+	function getVoice() {
+		return new Promise((resolve) => {
+			let voices = speechSynthesis.getVoices();
+			if (voices.length) {
+				resolve(voices[0]);
+			} else {
+				speechSynthesis.onvoiceschanged = () => {
+					resolve(speechSynthesis.getVoices()[0]);
+				};
+			}
+		});
+	}
 
 	const addEntry = () => {
 		if (input.trim() !== '') {
@@ -43,40 +57,46 @@ const SpeechApp = () => {
 		if (currentIndex === index) setCurrentIndex(null);
 	};
 
-	const speakRandom = () => {
+	const startSpeaking = async () => {
 		if (entries.length === 0) return;
-		const idx = Math.floor(Math.random() * entries.length);
-		setCurrentIndex(idx);
-		setFlashIndex(idx);
-		setTimeout(() => setFlashIndex(null), 500); // remove flash after 0.5s
-		const utterance = new SpeechSynthesisUtterance(entries[idx]);
-		window.speechSynthesis.speak(utterance);
-	};
 
-	const startSpeaking = () => {
-		if (isSpeaking || entries.length === 0) return;
+		const voice = await getVoice();
 		setIsSpeaking(true);
-		intervalRef.current = setInterval(speakRandom, speedIntervals[speed]);
+		let keepSpeaking = true;
+
+		const speakNext = () => {
+			if (!keepSpeaking) return;
+
+			const idx = Math.floor(Math.random() * entries.length);
+			setCurrentIndex(idx);
+			setFlashIndex(idx);
+			setTimeout(() => setFlashIndex(null), 500);
+
+			const utterance = new SpeechSynthesisUtterance(entries[idx]);
+			utterance.voice = voice;
+
+			utterance.onend = () => {
+				if (keepSpeaking) {
+					setTimeout(speakNext, speedIntervals[speed]);
+				}
+			};
+
+			window.speechSynthesis.speak(utterance);
+		};
+
+		speakNext();
+
+		stopSpeakingRef.current = () => {
+			keepSpeaking = false;
+			window.speechSynthesis.cancel();
+			setIsSpeaking(false);
+			setCurrentIndex(null);
+		};
 	};
 
 	const stopSpeaking = () => {
-		setIsSpeaking(false);
-		setCurrentIndex(null);
-		clearInterval(intervalRef.current);
-		window.speechSynthesis.cancel();
+		if (stopSpeakingRef.current) stopSpeakingRef.current();
 	};
-
-	// If speed changes while speaking, restart the timer with the new interval
-	useEffect(() => {
-		if (!isSpeaking) return;
-		clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(speakRandom, speedIntervals[speed]);
-		return () => clearInterval(intervalRef.current);
-	}, [speed, isSpeaking]);
-
-	useEffect(() => {
-		return () => clearInterval(intervalRef.current);
-	}, []);
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
@@ -167,11 +187,7 @@ const SpeechApp = () => {
 };
 
 function App() {
-	return (
-		<>
-			<SpeechApp />
-		</>
-	);
+	return <SpeechApp />;
 }
 
 export default App;
