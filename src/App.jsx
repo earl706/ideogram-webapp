@@ -216,7 +216,252 @@
 
 // export default App;
 
-import React, { useState, useEffect, useRef } from 'react';
+// import React, { useState, useEffect, useRef } from 'react';
+
+// export default function App() {
+// const initialEntries = [
+// 	'Land',
+// 	'Water',
+// 	'Biological/Organic',
+// 	'Manmade',
+// 	'Space/Air',
+// 	'Natural',
+// 	'Motion Energy',
+// 	'Animal',
+// 	'Human',
+// 	'Male',
+// 	'Female'
+// ];
+
+// 	const [entries, setEntries] = useState(initialEntries);
+// 	const [currentEntry, setCurrentEntry] = useState('');
+// 	const [speed, setSpeed] = useState('medium');
+// 	const [isRunning, setIsRunning] = useState(false);
+// 	const [duration, setDuration] = useState(120); // default 2 min
+// 	const [timeLeft, setTimeLeft] = useState(duration);
+
+// 	const intervalRef = useRef(null);
+// 	const countdownRef = useRef(null);
+
+// 	const speedMap = {
+// 		'very slow': 4000,
+// 		slow: 3000,
+// 		medium: 2000,
+// 		fast: 1000,
+// 		'very fast': 500
+// 	};
+
+// 	const speak = (text) => {
+// 		if ('speechSynthesis' in window) {
+// 			const utterance = new SpeechSynthesisUtterance(text);
+// 			utterance.lang = 'en-US';
+// 			window.speechSynthesis.cancel(); // cancel ongoing speech
+// 			window.speechSynthesis.speak(utterance);
+// 		}
+// 	};
+
+// 	const speakRandomEntry = () => {
+// 		if (entries.length === 0) return;
+
+// 		const randomIndex = Math.floor(Math.random() * entries.length);
+// 		const entry = entries[randomIndex];
+// 		setHighlighted(entry);
+
+// 		const utterance = new SpeechSynthesisUtterance(entry);
+// 		speechSynthesis.cancel();
+// 		speechSynthesis.speak(utterance);
+// 	};
+
+// 	const startDictation = () => {
+// 		setIsRunning(true);
+// 		setTimeLeft(duration);
+
+// 		intervalRef.current = setInterval(() => {
+// 			const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+// 			setCurrentEntry(randomEntry);
+// 			speak(randomEntry);
+// 		}, speedMap[speed]);
+
+// 		countdownRef.current = setInterval(() => {
+// 			setTimeLeft((prev) => {
+// 				if (prev <= 1) {
+// 					stopDictation();
+// 					return 0;
+// 				}
+// 				return prev - 1;
+// 			});
+// 		}, 1000);
+// 	};
+
+// 	const stopDictation = () => {
+// 		setIsRunning(false);
+// 		setCurrentEntry('');
+// 		clearInterval(intervalRef.current);
+// 		clearInterval(countdownRef.current);
+// 		window.speechSynthesis.cancel();
+// 	};
+
+// 	useEffect(() => {
+// 		return () => {
+// 			clearInterval(intervalRef.current);
+// 			clearInterval(countdownRef.current);
+// 		};
+// 	}, []);
+
+// 	// Format countdown as MM:SS
+// 	const formatTime = (seconds) => {
+// 		const mins = Math.floor(seconds / 60);
+// 		const secs = seconds % 60;
+// 		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+// 	};
+
+// const handleDeleteEntry = (entry) => {
+// 	setEntries(entries.filter((e) => e !== entry));
+// };
+// const handleAddEntry = (e) => {
+// 	e.preventDefault();
+// 	const form = e.target;
+// 	const input = form.elements.entry;
+// 	const newEntry = input.value.trim();
+// 	if (newEntry && !entries.includes(newEntry)) {
+// 		setEntries([...entries, newEntry]);
+// 	}
+// 	input.value = '';
+// };
+
+// 	// Circle progress calculation
+// 	const radius = 40;
+// 	const circumference = 2 * Math.PI * radius;
+// 	const progress = timeLeft > 0 ? (timeLeft / duration) * circumference : 0;
+
+// 	return (
+// <div className="mx-xl flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
+// 	<h1 className="mb-6 text-3xl font-bold text-gray-800">Ideogram</h1>
+// <form onSubmit={handleAddEntry} className="mb-4 flex w-full gap-2">
+// 	<input
+// 		type="text"
+// 		name="entry"
+// 		placeholder="New entry"
+// 		className="flex-1 rounded-lg border border-gray-300 p-2 focus:ring focus:outline-none"
+// 	/>
+// 	<button
+// 		type="submit"
+// 		className="cursor-pointer rounded-lg bg-blue-500 px-4 py-2 text-white transition-all hover:bg-blue-600"
+// 	>
+// 		Add
+// 	</button>
+// </form>
+
+// 	{/* Entries List */}
+// <div className="mb-6 grid w-full grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+// 	{entries.map((entry, idx) => (
+// 		<div
+// 			key={idx}
+// 			className={`flex items-center justify-between rounded-xl px-4 py-2 text-center shadow transition-all ${
+// 				currentEntry === entry
+// 					? 'scale-105 bg-blue-500 font-bold text-white'
+// 					: 'bg-white text-gray-700'
+// 			}`}
+// 		>
+// 			<span className="font-medium">{entry}</span>
+// 			<button
+// 				onClick={() => handleDeleteEntry(entry)}
+// 				className="cursor-pointer rounded-[5px] bg-red-500 px-2 py-1 text-white hover:bg-red-700"
+// 			>
+// 				Delete
+// 			</button>
+// 		</div>
+// 	))}
+// </div>
+
+// 	{/* Control Panel */}
+// 	<div className="flex w-full flex-col items-center gap-4 rounded-2xl bg-white p-6 shadow-lg">
+// 		{/* Speed Selector */}
+// 		<div className="flex w-full flex-col">
+// 			<label className="mb-1 text-sm text-gray-600">Speed</label>
+// 			<select
+// 				value={speed}
+// 				onChange={(e) => setSpeed(e.target.value)}
+// 				className="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
+// 			>
+// 				{Object.keys(speedMap).map((s) => (
+// 					<option key={s} value={s}>
+// 						{s}
+// 					</option>
+// 				))}
+// 			</select>
+// 		</div>
+
+// 		{/* Duration Selector */}
+// 		<div className="flex w-full flex-col">
+// 			<label className="mb-1 text-sm text-gray-600">Duration (seconds, min 120)</label>
+// 			<input
+// 				type="number"
+// 				min="120"
+// 				value={duration}
+// 				onChange={(e) => setDuration(Number(e.target.value))}
+// 				className="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
+// 			/>
+// 		</div>
+
+// 		{/* Countdown + Circular Timer */}
+// 		{isRunning && (
+// 			<div className="flex flex-col items-center gap-3">
+// 				<div className="relative h-24 w-24">
+// 					<svg className="h-full w-full -rotate-90 transform">
+// 						<circle
+// 							cx="50%"
+// 							cy="50%"
+// 							r={radius}
+// 							stroke="currentColor"
+// 							strokeWidth="8"
+// 							className="text-gray-300"
+// 							fill="transparent"
+// 						/>
+// 						<circle
+// 							cx="50%"
+// 							cy="50%"
+// 							r={radius}
+// 							stroke="currentColor"
+// 							strokeWidth="8"
+// 							className="text-blue-500 transition-all duration-1000 ease-linear"
+// 							fill="transparent"
+// 							strokeDasharray={circumference}
+// 							strokeDashoffset={circumference - progress}
+// 							strokeLinecap="round"
+// 						/>
+// 					</svg>
+// 					<div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-700">
+// 						{formatTime(timeLeft)}
+// 					</div>
+// 				</div>
+// 			</div>
+// 		)}
+
+// 		{/* Start / Stop Buttons */}
+// <div className="flex gap-4">
+// 	{!isRunning ? (
+// 		<button
+// 			onClick={startDictation}
+// 			className="cursor-pointer rounded-xl bg-blue-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-blue-600"
+// 		>
+// 			Start
+// 		</button>
+// 	) : (
+// 		<button
+// 			onClick={stopDictation}
+// 			className="cursor-pointer rounded-xl bg-red-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-red-600"
+// 		>
+// 			Stop
+// 		</button>
+// 	)}
+// </div>
+// 	</div>
+// </div>
+// 	);
+// }
+
+import React, { useState, useRef, useEffect } from 'react';
 
 export default function App() {
 	const initialEntries = [
@@ -234,73 +479,76 @@ export default function App() {
 	];
 
 	const [entries, setEntries] = useState(initialEntries);
-	const [currentEntry, setCurrentEntry] = useState('');
+	const [highlighted, setHighlighted] = useState(null);
 	const [speed, setSpeed] = useState('medium');
+	const [duration, setDuration] = useState(120); // minutes
+	const [timeLeft, setTimeLeft] = useState(0);
 	const [isRunning, setIsRunning] = useState(false);
-	const [duration, setDuration] = useState(120); // default 2 min
-	const [timeLeft, setTimeLeft] = useState(duration);
+	const [newEntry, setNewEntry] = useState('');
 
+	const timerRef = useRef(null);
 	const intervalRef = useRef(null);
-	const countdownRef = useRef(null);
 
-	const speedMap = {
+	const speeds = {
 		'very slow': 4000,
 		slow: 3000,
 		medium: 2000,
-		fast: 1000,
-		'very fast': 500
+		fast: 1200,
+		'very fast': 600
 	};
 
-	const speak = (text) => {
-		if ('speechSynthesis' in window) {
-			const utterance = new SpeechSynthesisUtterance(text);
-			utterance.lang = 'en-US';
-			window.speechSynthesis.cancel(); // cancel ongoing speech
-			window.speechSynthesis.speak(utterance);
-		}
+	const speakRandomEntry = () => {
+		if (entries.length === 0) return;
+
+		const randomIndex = Math.floor(Math.random() * entries.length);
+		const entry = entries[randomIndex];
+		setHighlighted(entry);
+
+		const utterance = new SpeechSynthesisUtterance(entry);
+		speechSynthesis.cancel();
+		speechSynthesis.speak(utterance);
 	};
 
 	const startDictation = () => {
+		if (!duration || isRunning) return;
+
+		const durationSeconds = duration;
+		setTimeLeft(durationSeconds);
 		setIsRunning(true);
-		setTimeLeft(duration);
 
-		intervalRef.current = setInterval(() => {
-			const randomEntry = entries[Math.floor(Math.random() * entries.length)];
-			setCurrentEntry(randomEntry);
-			speak(randomEntry);
-		}, speedMap[speed]);
-
-		countdownRef.current = setInterval(() => {
+		if (timerRef.current) clearInterval(timerRef.current);
+		timerRef.current = setInterval(() => {
 			setTimeLeft((prev) => {
 				if (prev <= 1) {
-					stopDictation();
+					clearInterval(timerRef.current);
+					clearInterval(intervalRef.current);
+					setIsRunning(false);
+					speechSynthesis.cancel();
+					setHighlighted(null);
 					return 0;
 				}
 				return prev - 1;
 			});
 		}, 1000);
+
+		speakRandomEntry();
+		intervalRef.current = setInterval(() => {
+			speakRandomEntry();
+		}, speeds[speed]);
 	};
 
 	const stopDictation = () => {
-		setIsRunning(false);
-		setCurrentEntry('');
+		clearInterval(timerRef.current);
 		clearInterval(intervalRef.current);
-		clearInterval(countdownRef.current);
-		window.speechSynthesis.cancel();
+		setIsRunning(false);
+		speechSynthesis.cancel();
+		setHighlighted(null);
 	};
 
-	useEffect(() => {
-		return () => {
-			clearInterval(intervalRef.current);
-			clearInterval(countdownRef.current);
-		};
-	}, []);
-
-	// Format countdown as MM:SS
-	const formatTime = (seconds) => {
-		const mins = Math.floor(seconds / 60);
-		const secs = seconds % 60;
-		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	const formatTime = (time) => {
+		const minutes = Math.floor(time / 60);
+		const seconds = time % 60;
+		return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 	};
 
 	const handleDeleteEntry = (entry) => {
@@ -317,14 +565,12 @@ export default function App() {
 		input.value = '';
 	};
 
-	// Circle progress calculation
-	const radius = 40;
-	const circumference = 2 * Math.PI * radius;
-	const progress = timeLeft > 0 ? (timeLeft / duration) * circumference : 0;
+	const progress = timeLeft > 0 ? (timeLeft / duration) * 100 : 0;
 
 	return (
-		<div className="mx-xl flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
-			<h1 className="mb-6 text-3xl font-bold text-gray-800">Ideogram</h1>
+		<div className="flex min-h-screen flex-col items-center bg-gray-100 p-6">
+			<h1 className="mb-4 text-2xl font-bold">Ideogram</h1>
+			{/* NEW ENTRY FORM */}
 			<form onSubmit={handleAddEntry} className="mb-4 flex w-full gap-2">
 				<input
 					type="text"
@@ -339,14 +585,13 @@ export default function App() {
 					Add
 				</button>
 			</form>
-
-			{/* Entries List */}
-			<div className="mb-6 grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+			{/* ENTRIES */}
+			<div className="mb-6 grid w-full grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
 				{entries.map((entry, idx) => (
 					<div
 						key={idx}
 						className={`flex items-center justify-between rounded-xl px-4 py-2 text-center shadow transition-all ${
-							currentEntry === entry
+							highlighted === entry
 								? 'scale-105 bg-blue-500 font-bold text-white'
 								: 'bg-white text-gray-700'
 						}`}
@@ -361,10 +606,29 @@ export default function App() {
 					</div>
 				))}
 			</div>
+			{/* TIMER  */}
+			<div className="mb-4 flex space-x-4">
+				{/* <select
+					value={speed}
+					onChange={(e) => setSpeed(e.target.value)}
+					className="rounded border p-2"
+				>
+					{Object.keys(speeds).map((s) => (
+						<option key={s} value={s}>
+							{s}
+						</option>
+					))}
+				</select>
 
-			{/* Control Panel */}
-			<div className="flex w-full flex-col items-center gap-4 rounded-2xl bg-white p-6 shadow-lg">
-				{/* Speed Selector */}
+				<input
+					type="number"
+					value={duration}
+					onChange={(e) => setDuration(Math.max(2, Number(e.target.value)))}
+					className="w-20 rounded border p-2"
+					min="2"
+				/>
+				<span className="self-center">minutes</span> */}
+
 				<div className="flex w-full flex-col">
 					<label className="mb-1 text-sm text-gray-600">Speed</label>
 					<select
@@ -372,14 +636,13 @@ export default function App() {
 						onChange={(e) => setSpeed(e.target.value)}
 						className="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
 					>
-						{Object.keys(speedMap).map((s) => (
+						{Object.keys(speeds).map((s) => (
 							<option key={s} value={s}>
 								{s}
 							</option>
 						))}
 					</select>
 				</div>
-
 				{/* Duration Selector */}
 				<div className="flex w-full flex-col">
 					<label className="mb-1 text-sm text-gray-600">Duration (seconds, min 120)</label>
@@ -391,60 +654,57 @@ export default function App() {
 						className="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
 					/>
 				</div>
-
-				{/* Countdown + Circular Timer */}
-				{isRunning && (
-					<div className="flex flex-col items-center gap-3">
-						<div className="relative h-24 w-24">
-							<svg className="h-full w-full -rotate-90 transform">
-								<circle
-									cx="50%"
-									cy="50%"
-									r={radius}
-									stroke="currentColor"
-									strokeWidth="8"
-									className="text-gray-300"
-									fill="transparent"
-								/>
-								<circle
-									cx="50%"
-									cy="50%"
-									r={radius}
-									stroke="currentColor"
-									strokeWidth="8"
-									className="text-blue-500 transition-all duration-1000 ease-linear"
-									fill="transparent"
-									strokeDasharray={circumference}
-									strokeDashoffset={circumference - progress}
-									strokeLinecap="round"
-								/>
-							</svg>
-							<div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-700">
-								{formatTime(timeLeft)}
-							</div>
-						</div>
-					</div>
-				)}
-
-				{/* Start / Stop Buttons */}
-				<div className="flex gap-4">
-					{!isRunning ? (
-						<button
-							onClick={startDictation}
-							className="cursor-pointer rounded-xl bg-blue-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-blue-600"
-						>
-							Start
-						</button>
-					) : (
-						<button
-							onClick={stopDictation}
-							className="cursor-pointer rounded-xl bg-red-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-red-600"
-						>
-							Stop
-						</button>
-					)}
-				</div>
 			</div>
+
+			<div className="mb-4 flex gap-4">
+				{!isRunning ? (
+					<button
+						onClick={startDictation}
+						className="cursor-pointer rounded-xl bg-blue-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-blue-600"
+					>
+						Start
+					</button>
+				) : (
+					<button
+						onClick={stopDictation}
+						className="cursor-pointer rounded-xl bg-red-500 px-6 py-2 font-semibold text-white shadow transition hover:bg-red-600"
+					>
+						Stop
+					</button>
+				)}
+			</div>
+			{isRunning ? (
+				<div className="relative mb-4 h-32 w-32">
+					<svg className="h-full w-full -rotate-90 transform">
+						<circle
+							className="text-gray-300"
+							strokeWidth="8"
+							stroke="currentColor"
+							fill="transparent"
+							r="58"
+							cx="64"
+							cy="64"
+						/>
+						<circle
+							className="text-blue-500"
+							strokeWidth="8"
+							strokeDasharray="364"
+							strokeDashoffset={(364 * (100 - progress)) / 100}
+							strokeLinecap="round"
+							stroke="currentColor"
+							fill="transparent"
+							r="58"
+							cx="64"
+							cy="64"
+						/>
+					</svg>
+					<div className="absolute inset-0 flex items-center justify-center text-lg font-bold">
+						{formatTime(timeLeft)}
+					</div>
+				</div>
+			) : (
+				''
+			)}
 		</div>
 	);
 }
